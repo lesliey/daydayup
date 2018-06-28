@@ -45,6 +45,7 @@ public class RobotMgr {
                 .collect(Collectors.joining(System.lineSeparator()));
         CITY_MAP_LIST.addAll(objectMapper.readValue(json, new TypeReference<List<Map>>() {
         }));
+        log.info("程序启动中，共读取{}个城市信息", CITY_MAP_LIST.size());
     }
 
     public String getCityCode(String tj) {
@@ -65,7 +66,9 @@ public class RobotMgr {
     }
 
     public String getRealWeather(String name) {
-        return getWeatherByCode(getCityCode(name));
+        String code = getCityCode(name);
+        log.info("城市:{}查询到对应的code:{}", name, code);
+        return getWeatherByCode(code);
     }
 
     public String getRecentWeather(String name) {
@@ -80,6 +83,7 @@ public class RobotMgr {
     public String getRealDesc(String city, String name) {
         try {
             String real = getRealWeather(city);
+            log.info("城市city:{},name:{}的天气:{}", city, name, real);
             Map realMap = objectMapper.readValue(real, new TypeReference<Map>() {
             });
             realMap = (Map) realMap.get("weatherinfo");
