@@ -28,4 +28,9 @@ public class HelloController {
     public String start() {
         return "start";
     }
+
+    @RequestMapping(value = "/msg", method = RequestMethod.GET)
+    public String msg() {
+        return "text msg";
+    }
 }
