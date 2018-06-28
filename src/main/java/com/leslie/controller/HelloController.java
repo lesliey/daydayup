@@ -23,4 +23,9 @@ public class HelloController {
     public String xiu() {
         return "xiu love ~";
     }
+
+    @RequestMapping(value = "/start", method = RequestMethod.GET)
+    public String start() {
+        return "start";
+    }
 }
