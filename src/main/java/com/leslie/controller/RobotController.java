@@ -58,7 +58,7 @@ public class RobotController {
             String name = "小主";
             if (content.contains("天气") || content.contains("雨")) {
                 String city = robotMgr.getCityFromContent(content);
-                log.info("准备查询name:{]的天气", city);
+                log.info("准备查询name:{}的天气", city);
                 if (content.contains("未来") || content.contains("明天") || content.contains("后天")) {
                     result = robotMgr.getRecentDesc(city, name);
                 } else {
@@ -79,7 +79,7 @@ public class RobotController {
             }
         }
         String re = robotMgr.sendText(fromUserName, weixinid, currentTime, result);
-        log.info("robot返回消息:{}", objectMapper.writeValueAsString(map));
+        log.info("robot返回消息:{}", re);
         response.getWriter().print(re);
     }
 }

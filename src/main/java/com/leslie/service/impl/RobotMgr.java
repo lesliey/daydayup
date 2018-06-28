@@ -130,6 +130,7 @@ public class RobotMgr {
     }
 
     public String getCityFromContent(String content) {
+        log.info("content:{}, list.size:{}", content, CITY_MAP_LIST.size());
         for (Map map : CITY_MAP_LIST) {
             String city = map.get("name_cn") + "";
             String name_pinyin = map.get("name_pinyin") + "";
