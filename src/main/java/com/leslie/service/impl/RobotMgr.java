@@ -184,16 +184,31 @@ public class RobotMgr {
     public String getValueFromReq(HttpServletRequest request) {
         try {
             InputStream is = request.getInputStream();
-            byte[] bytes = new byte[1024];
-            int length = -1;
-            StringBuffer sb = new StringBuffer();
-            while ((length = is.read(bytes)) != -1) {
-                sb.append(new String(bytes, 0, length));
-            }
-            return sb.toString();
+            return getStrFromInsByCode(is, "utf-8");
         } catch (Exception e) {
             return "";
         }
+    }
+
+    public String getStrFromInsByCode(InputStream is, String code) {
+        StringBuilder builder = new StringBuilder();
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new InputStreamReader(is, code));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return builder.toString();
     }
 
     // String转Map
