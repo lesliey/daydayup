@@ -1,0 +1,23 @@
+server:
+  display-name: xiu-love
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: xiu-love
+
+
+management:
+  security:
+    enabled: false
+
+logging:
+  level:
+    org.springframework.web: DEBUG
+  pattern:
+    console: '%d [%thread] [%X{trace_id:--}] %-5level %logger - %msg%n'
+
+endpoints:
+  actuator:
+    sensitive: false

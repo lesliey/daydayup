@@ -10,6 +10,7 @@ package com.leslie.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leslie.service.impl.RobotMgr;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,18 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
-import java.awt.*;
 import java.io.IOException;
 import java.util.Map;
 
 
 @RestController
 @RequestMapping("robot")
+@Slf4j
 public class RobotController {
     @Autowired
     private RobotMgr robotMgr;
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @RequestMapping(produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
@@ -43,7 +46,7 @@ public class RobotController {
         String fromUserName = map.get("FromUserName") + "";
         String currentTime = System.currentTimeMillis() + "";
         String result = "[愉快]终于等到你，还好我没放弃~";
-        ;
+        log.info("robot收到消息:{}", objectMapper.writeValueAsString(map));
         if (msgType.equals("event")) {
             String event = map.get("Event") + "";
             String eventKey = map.get("EventKey") + "";
@@ -74,6 +77,8 @@ public class RobotController {
                 result = resMa.get("content") + "";
             }
         }
-        return robotMgr.sendText(fromUserName, weixinid, currentTime, result);
+        String re = robotMgr.sendText(fromUserName, weixinid, currentTime, result);
+        log.info("robot收到返回消息:{}", objectMapper.writeValueAsString(map));
+        return re;
     }
 }
