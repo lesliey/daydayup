@@ -14,11 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
@@ -34,11 +34,12 @@ public class RobotController {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @RequestMapping(produces = MediaType.APPLICATION_XML_VALUE)
-    @ResponseBody
-    public String msg(HttpServletRequest request) throws IOException {
+    @RequestMapping()
+    public void msg(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         if (robotMgr.check(request)) {
-            return request.getParameter("echostr");
+            response.getWriter().print(request.getParameter("echostr"));
         }
         String weixinid = "gh_55c5bb057e4a";
         Map<String, String> map = robotMgr.strToMap(robotMgr.getValueFromReq(request));
@@ -79,6 +80,6 @@ public class RobotController {
         }
         String re = robotMgr.sendText(fromUserName, weixinid, currentTime, result);
         log.info("robot收到返回消息:{}", objectMapper.writeValueAsString(map));
-        return re;
+        response.getWriter().print(re);
     }
 }
