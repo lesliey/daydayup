@@ -40,12 +40,12 @@ public class RobotMgr {
     @PostConstruct
     public void readCity() throws IOException {
         InputStream stream = getClass().getResourceAsStream("/city.json");
-        String json = new BufferedReader(new InputStreamReader(stream)).lines()
-                .parallel()
-                .collect(Collectors.joining(System.lineSeparator()));
+        String json = getStrFromInsByCode(stream, "utf-8");
+        stream.close();
         CITY_MAP_LIST.addAll(objectMapper.readValue(json, new TypeReference<List<Map>>() {
         }));
         log.info("程序启动中，共读取{}个城市信息", CITY_MAP_LIST.size());
+        log.info("城市:{}", objectMapper.writeValueAsString(CITY_MAP_LIST));
     }
 
     public String getCityCode(String tj) {
