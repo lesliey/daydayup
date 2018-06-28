@@ -18,4 +18,9 @@ public class HelloController {
     public String index() {
         return "hello";
     }
+
+    @RequestMapping(value = "/xiu", method = RequestMethod.GET)
+    public String xiu() {
+        return "xiu";
+    }
 }
