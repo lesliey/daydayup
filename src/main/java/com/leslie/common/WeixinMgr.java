@@ -1,9 +1,15 @@
 package com.leslie.common;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leslie.service.api.weixin.WxUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -14,7 +20,13 @@ import java.util.Map;
 @Component
 public class WeixinMgr {
     @Value("{weixin.robbot.token:wxx}")
-    public String token = "wxx";
+    private String token = "wxx";
+    private String wxAppId = "wxa094e00092768755";
+    private String wxAppSecret = "df83ff6496f22ed1212b895c328fe8a9";
+    @Autowired
+    private RestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 验证请求来自微信
@@ -68,7 +80,7 @@ public class WeixinMgr {
     }
 
     /**
-     * 发送图文消息
+     * 构造图文消息
      *
      * @param toUserName   接收方id
      * @param fromUserName 发送方id
@@ -88,13 +100,37 @@ public class WeixinMgr {
         return param;
     }
 
-    // 发送文本消息
+    /**
+     * 构造文本消息
+     */
+
     public String createTextMsg(String toUserName, String fromUserName,
                                 String content) {
         String currentTime = System.currentTimeMillis() + "";
         return "<xml><ToUserName><![CDATA[" + toUserName + "]]></ToUserName><FromUserName><![CDATA[" + fromUserName
                 + "]]></FromUserName><CreateTime>" + currentTime + "</CreateTime><MsgType>text</MsgType><Content><![CDATA["
                 + content + "]]></Content></xml>";
+    }
+
+    /**
+     * 获取微信token
+     */
+    public String getAccessToken() throws IOException {
+        String json = restTemplate.getForObject(String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s", wxAppId, wxAppSecret), String.class);
+        Map map = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
+        });
+        return map.get("access_token") + "";
+    }
+
+
+    /**
+     * 个人订阅号，无权限调用..日
+     * 获取微信用户基本信息
+     */
+    @Deprecated
+    public WxUser getUserInfo(String openid) throws IOException {
+        String wxToken = getAccessToken();
+        return restTemplate.getForObject(String.format("https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN", wxToken, openid), WxUser.class);
     }
 
 }

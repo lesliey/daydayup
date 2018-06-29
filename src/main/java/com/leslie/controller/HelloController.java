@@ -7,16 +7,26 @@ package com.leslie.controller;
  * 修改历史：2018年06月28日 - yanghaixiao - 创建。<br/>
  */
 
+import com.leslie.common.WeixinMgr;
+import com.leslie.service.api.weixin.WxUser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 
 @RestController
 public class HelloController {
+    @Autowired
+    private WeixinMgr weixinMgr;
+
     @RequestMapping(value = "/", method = RequestMethod.GET)
-    public String index() {
-        return "hello";
+    @ResponseBody
+    public WxUser index() throws IOException {
+        return weixinMgr.getUserInfo("oZyK-1QfcdvtDaV0ZNmisDvkh-LQ");
     }
 
     @RequestMapping(value = "/xiu", method = RequestMethod.GET)

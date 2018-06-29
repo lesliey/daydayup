@@ -16,6 +16,7 @@ import com.leslie.service.api.weixin.WxEventMsg;
 import com.leslie.service.api.weixin.WxTextMsg;
 import com.leslie.service.api.weixin.WxVoiceMsg;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -76,6 +77,7 @@ public class RobotController {
                 reXml = weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, "终于等到你，还好我没放弃;不过MsgType:" + msgType + "暂未适配,稍后推出");
             }
         }
+        log.info("robot返回内容:{}", reXml);
         response.getWriter().print(reXml);
     }
 
@@ -102,6 +104,9 @@ public class RobotController {
 
     private String doVoiceMsg(WxVoiceMsg msg) throws IOException {
         String content = msg.getRecognition();
+        if (StringUtils.isBlank(content.trim())) {
+            return weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, "没能听清你说的什么，你可以大声地再说一次吗？");
+        }
         RobotService service = robotMgr.getService(context, content);
         String result = service.response(content);
         return weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, result);
