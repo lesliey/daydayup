@@ -31,7 +31,7 @@ public class BodyReaderHttpServletRequestWrapper extends
         InputStream in = request.getInputStream();
         String json = StreamUtils.copyToString(in, Charset.forName("UTF-8"));
         log.info("请求body:{}",json);
-        body = json.getBytes();
+        body = json.getBytes("UTF-8");
     }
 
     @Override
