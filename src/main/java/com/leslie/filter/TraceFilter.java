@@ -41,11 +41,17 @@ public class TraceFilter implements Filter {
             params.put(paraName, request.getParameter(paraName));
         }
         log.info("访问路径:{},请求参数:{},客户端:{}", request.getPathInfo(), objectMapper.writeValueAsString(params), request.getRemoteHost());
-        filterChain.doFilter(servletRequest, servletResponse);
+        filterChain.doFilter(getRequestBody(request), servletResponse);
     }
 
     @Override
     public void destroy() {
 
+    }
+
+    private HttpServletRequest getRequestBody(HttpServletRequest request) throws IOException {
+
+        HttpServletRequest request1 = new BodyReaderHttpServletRequestWrapper(request);
+        return request1;
     }
 }
