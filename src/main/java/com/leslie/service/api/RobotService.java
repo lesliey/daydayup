@@ -1,5 +1,8 @@
 package com.leslie.service.api;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 /**
  * 版权所有(C)，上海海鼎信息工程股份有限公司，2018，所有权利保留。<br/>
  * 项目名：	com.leslie.service<br/>
@@ -10,5 +13,5 @@ package com.leslie.service.api;
 
 
 public interface RobotService {
-
+    String response(String content) throws IOException;
 }

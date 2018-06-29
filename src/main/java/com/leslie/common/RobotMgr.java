@@ -1,4 +1,4 @@
-package com.leslie.service.impl;
+package com.leslie.common;
 
 /**
  * 版权所有(C)，上海海鼎信息工程股份有限公司，2018，所有权利保留。<br/>
@@ -10,10 +10,11 @@ package com.leslie.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leslie.common.XmlUtil;
+import com.leslie.service.api.RobotService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -24,12 +25,12 @@ import java.io.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class RobotMgr {
     public static final List<Map> CITY_MAP_LIST = new ArrayList<>();
+    public static final Map<String, String> SMART_HANDLER_MAP = new HashMap<>();
     @Value("{weixin.robbot.token:wxx}")
     public static final String token = "wxx";
     @Autowired
@@ -44,8 +45,23 @@ public class RobotMgr {
         stream.close();
         CITY_MAP_LIST.addAll(objectMapper.readValue(json, new TypeReference<List<Map>>() {
         }));
-        log.info("程序启动中，共读取{}个城市信息", CITY_MAP_LIST.size());
-        log.info("城市:{}", objectMapper.writeValueAsString(CITY_MAP_LIST));
+        InputStream robotStream = getClass().getResourceAsStream("/robot.json");
+        json = getStrFromInsByCode(robotStream, "utf-8");
+        robotStream.close();
+        SMART_HANDLER_MAP.putAll(objectMapper.readValue(json, new TypeReference<Map<String, String>>() {
+        }));
+        log.info("程序启动中，共读取{}个城市信息,{}个匹配规则", CITY_MAP_LIST.size(), SMART_HANDLER_MAP.size());
+    }
+
+    public RobotService getService(ApplicationContext context, String content) {
+        for (String key : SMART_HANDLER_MAP.keySet()) {
+            if (content.contains(key)) {
+                log.info("启用处理器:{}", SMART_HANDLER_MAP.get(key));
+                return (RobotService) context.getBean(SMART_HANDLER_MAP.get(key));
+            }
+        }
+        log.info("启用默认处理器");
+        return (RobotService) context.getBean("default");
     }
 
     public String getCityCode(String tj) {
@@ -67,7 +83,6 @@ public class RobotMgr {
 
     public String getRealWeather(String name) {
         String code = getCityCode(name);
-        log.info("城市:{}查询到对应的code:{}", name, code);
         return getWeatherByCode(code);
     }
 
@@ -83,7 +98,6 @@ public class RobotMgr {
     public String getRealDesc(String city, String name) {
         try {
             String real = getRealWeather(city);
-            log.info("城市city:{},name:{}的天气:{}", city, name, real);
             Map realMap = objectMapper.readValue(real, new TypeReference<Map>() {
             });
             realMap = (Map) realMap.get("weatherinfo");
@@ -130,7 +144,6 @@ public class RobotMgr {
     }
 
     public String getCityFromContent(String content) {
-        log.info("content:{}, list.size:{}", content, CITY_MAP_LIST.size());
         for (Map map : CITY_MAP_LIST) {
             String city = map.get("name_cn") + "";
             String name_pinyin = map.get("name_pinyin") + "";
@@ -237,12 +250,11 @@ public class RobotMgr {
     }
 
     // 发送文本消息
-    public String sendText(String toUserName, String fromUserName, String createTime,
-                           String content) {
-        String param = "<xml><ToUserName><![CDATA[" + toUserName + "]]></ToUserName><FromUserName><![CDATA[" + fromUserName
+    public String createWeixinMsg(String toUserName, String fromUserName, String createTime,
+                                  String content) {
+        return "<xml><ToUserName><![CDATA[" + toUserName + "]]></ToUserName><FromUserName><![CDATA[" + fromUserName
                 + "]]></FromUserName><CreateTime>" + createTime + "</CreateTime><MsgType>text</MsgType><Content><![CDATA["
                 + content + "]]></Content></xml>";
-        return param;
     }
 
 }

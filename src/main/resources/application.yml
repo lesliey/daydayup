@@ -18,7 +18,10 @@ logging:
     org.springframework.web: DEBUG
   pattern:
     console: '%d [%thread] [%X{trace_id:--}] %-5level %logger - %msg%n'
+  path: /home/logs
 
 endpoints:
   actuator:
     sensitive: false
+
+
