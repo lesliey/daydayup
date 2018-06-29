@@ -9,7 +9,12 @@ package com.leslie.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leslie.common.RobotMgr;
+import com.leslie.common.WeixinMgr;
 import com.leslie.service.api.RobotService;
+import com.leslie.service.api.weixin.BaseWxMsg;
+import com.leslie.service.api.weixin.WxEventMsg;
+import com.leslie.service.api.weixin.WxTextMsg;
+import com.leslie.service.api.weixin.WxVoiceMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -29,36 +34,76 @@ public class RobotController {
     @Autowired
     private RobotMgr robotMgr;
     @Autowired
+    private WeixinMgr weixinMgr;
+    @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private ApplicationContext context;
+    private String weixinid = "gh_55c5bb057e4a";
 
-    @RequestMapping()
+    @RequestMapping
     public void msg(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        if (robotMgr.check(request)) {
+        if (weixinMgr.check(request)) {
             response.getWriter().print(request.getParameter("echostr"));
         }
-        String weixinid = "gh_55c5bb057e4a";
-        Map<String, String> map = robotMgr.strToMap(robotMgr.getValueFromReq(request));
-        String msgType = map.get("MsgType") + "";
-        String fromUserName = map.get("FromUserName") + "";
-        String currentTime = System.currentTimeMillis() + "";
-        log.info("robot收到消息:{}", objectMapper.writeValueAsString(map));
-        if (msgType.equals("event")) {
-            String event = map.get("Event") + "";
-            String eventKey = map.get("EventKey") + "";
-            if (event.equals(("subscribe"))) {
-                // TODO 处理事件
+        Map<String, String> map = weixinMgr.xml2Map(robotMgr.getValueFromReq(request));
+        String body = objectMapper.writeValueAsString(map);
+        log.info("robot收到消息:{}", body);
+        BaseWxMsg msg = objectMapper.readValue(body, BaseWxMsg.class);
+        log.info("robot收到消息类型:{}", msg.getMsgType());
+        String msgType = msg.getMsgType();
+        String reXml = "";
+        switch (msgType) {
+            case BaseWxMsg.EVENT_TYPE: {
+                WxEventMsg eventMsg = objectMapper.readValue(body, WxEventMsg.class);
+                reXml = doEvent(eventMsg);
             }
-        } else {
-            String content = (map.get("Content") + "").toLowerCase();
-            RobotService service = robotMgr.getService(context, content);
-            String result = service.response(content);
-            String re = robotMgr.createWeixinMsg(fromUserName, weixinid, currentTime, result);
-            log.info("robot返回消息:{}", re);
-            response.getWriter().print(re);
+            break;
+            case BaseWxMsg.TEXT_TYPE: {
+                WxTextMsg textMsg = objectMapper.readValue(body, WxTextMsg.class);
+                reXml = doTextMsg(textMsg);
+            }
+            break;
+            case BaseWxMsg.VOICE_TYPE: {
+                WxVoiceMsg voiceMsg = objectMapper.readValue(body, WxVoiceMsg.class);
+                reXml = doVoiceMsg(voiceMsg);
+            }
+            break;
+            default: {
+                log.info("MsgType:{}暂未适配,稍后推出", msgType);
+                reXml = weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, "终于等到你，还好我没放弃;不过MsgType:" + msgType + "暂未适配,稍后推出");
+            }
         }
+        response.getWriter().print(reXml);
+    }
+
+    private String doEvent(WxEventMsg msg) {
+        String event = msg.getEvent();
+        String eventKey = msg.getEventKey();
+        String reXml = "";
+        if (event.equals(WxEventMsg.SUBSCRIBE)) {
+            log.info("有新人<{}>关注了公众号,发送欢迎信息", msg.getFromUserName());
+            reXml = weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, "欢迎关注.");
+        }
+        if (event.equals(WxEventMsg.UNSUBSCRIBE)) {
+            log.info("有人<{}>取关了公众号", msg.getFromUserName());
+        }
+        return reXml;
+    }
+
+    private String doTextMsg(WxTextMsg msg) throws IOException {
+        String content = msg.getContent();
+        RobotService service = robotMgr.getService(context, content);
+        String result = service.response(content);
+        return weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, result);
+    }
+
+    private String doVoiceMsg(WxVoiceMsg msg) throws IOException {
+        String content = msg.getRecognition();
+        RobotService service = robotMgr.getService(context, content);
+        String result = service.response(content);
+        return weixinMgr.createTextMsg(msg.getFromUserName(), weixinid, result);
     }
 }
