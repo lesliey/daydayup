@@ -30,7 +30,7 @@ import java.util.*;
 @Slf4j
 public class RobotMgr {
     public static final List<Map> CITY_MAP_LIST = new ArrayList<>();
-    public static final Map<String, String> SMART_HANDLER_MAP = new HashMap<>();
+    public static final Map<String, String> SMART_HANDLER_MAP = new LinkedHashMap<>();
     @Value("{weixin.robbot.token:wxx}")
     public static final String token = "wxx";
     @Autowired
@@ -48,7 +48,7 @@ public class RobotMgr {
         InputStream robotStream = getClass().getResourceAsStream("/robot.json");
         json = getStrFromInsByCode(robotStream, "utf-8");
         robotStream.close();
-        SMART_HANDLER_MAP.putAll(objectMapper.readValue(json, new TypeReference<Map<String, String>>() {
+        SMART_HANDLER_MAP.putAll(objectMapper.readValue(json, new TypeReference<LinkedHashMap<String, String>>() {
         }));
         log.info("程序启动中，共读取{}个城市信息,{}个匹配规则", CITY_MAP_LIST.size(), SMART_HANDLER_MAP.size());
     }
