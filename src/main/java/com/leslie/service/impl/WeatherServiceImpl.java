@@ -72,9 +72,8 @@ public class WeatherServiceImpl implements RobotService {
             realMap = (Map) realMap.get("weatherinfo");
             GregorianCalendar ca = new GregorianCalendar();
             String half = ca.get(GregorianCalendar.AM_PM) == 0 ? "上午好" : "下午好";
-            real = String.format("%s，%s，%s当前的天气:%s°C,%s,湿度%s,%s", new Object[]{
-                    name, half, realMap.get("city"), realMap.get("temp"), realMap.get("WD") + "" + realMap.get("WS"),
-                    realMap.get("SD"), (realMap.get("rain") + "").equals("0") ? "无雨。" : "有雨(上班记得带伞啦)。"});
+            real = String.format("%s，%s，%s当前的天气:%s°C,%s,湿度%s,%s", name, half, realMap.get("city"), realMap.get("temp"), realMap.get("WD") + "" + realMap.get("WS"),
+                    realMap.get("SD"), (realMap.get("rain") + "").equals("0") ? "无雨。" : "有雨(上班记得带伞啦)。");
             return real;
 
         } catch (Exception e) {
@@ -93,15 +92,14 @@ public class WeatherServiceImpl implements RobotService {
             for (Map ss : list) {
                 Map basic = (Map) ss.get("basic");
                 List<Map> daily_forecast = (List<Map>) ss.get("daily_forecast");
-                String json = String.format("%s, %s未来几日天气情况:\n", name, basic.get("city"));
+                StringBuilder json = new StringBuilder(String.format("%s, %s未来几日天气情况:\n", name, basic.get("city")));
                 for (Map daily : daily_forecast) {
                     Map cond = (Map) daily.get("cond");
                     Map tmp = (Map) daily.get("tmp");
                     Map wind = (Map) daily.get("wind");
-                    String str = String.format("%s,%s,%s°C-%s°C,%s", new Object[]{
-                            (daily.get("date") + "").substring(5, 10), cond.get("txt_d"), tmp.get("min"), tmp.get("max"),
-                            wind.get("dir") + "" + wind.get("spd") + "级"});
-                    json += str + "\n";
+                    String str = String.format("%s,%s,%s°C-%s°C,%s", (daily.get("date") + "").substring(5, 10), cond.get("txt_d"), tmp.get("min"), tmp.get("max"),
+                            wind.get("dir") + "" + wind.get("spd") + "级");
+                    json.append(str).append("\n");
                 }
                 result += json;
             }
