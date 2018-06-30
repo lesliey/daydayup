@@ -1,6 +1,6 @@
 server:
   display-name: xiu-love
-  port: 8080
+  port: 80
   servlet-path: /xiu
 spring:
   profiles:
@@ -18,7 +18,7 @@ logging:
     org.springframework.web: DEBUG
   pattern:
     console: '%d [%thread] [%X{trace_id:--}] %-5level %logger - %msg%n'
-  path: /usr/logs
+  path: /home/logs
 
 endpoints:
   actuator:
