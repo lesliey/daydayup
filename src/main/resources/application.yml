@@ -1,6 +1,6 @@
 server:
   display-name: xiu-love
-  port: 80
+  port: 8081
   servlet-path: /xiu
 spring:
   profiles:
