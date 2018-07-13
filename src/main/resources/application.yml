@@ -1,12 +1,11 @@
 server:
-  display-name: xiu-love
+  display-name: daydayup
   port: 8081
-  servlet-path: /xiu
 spring:
   profiles:
     active: dev
   application:
-    name: xiu-love
+    name: daydayup
 
 
 management:
