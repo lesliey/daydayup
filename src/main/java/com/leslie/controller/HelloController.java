@@ -9,11 +9,9 @@ package com.leslie.controller;
 
 import com.leslie.common.WeixinMgr;
 import com.leslie.service.api.weixin.WxUser;
+import com.leslie.service.impl.WeatherServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -22,6 +20,8 @@ import java.io.IOException;
 public class HelloController {
     @Autowired
     private WeixinMgr weixinMgr;
+    @Autowired
+    private WeatherServiceImpl weatherService;
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ResponseBody
@@ -29,18 +29,9 @@ public class HelloController {
         return weixinMgr.getUserInfo("oZyK-1QfcdvtDaV0ZNmisDvkh-LQ");
     }
 
-    @RequestMapping(value = "/xiu", method = RequestMethod.GET)
-    public String xiu() {
-        return "xiu love ~";
-    }
-
-    @RequestMapping(value = "/start", method = RequestMethod.GET)
-    public String start() {
-        return "start";
-    }
 
     @RequestMapping(value = "/msg", method = RequestMethod.GET)
-    public String msg() {
-        return "text msg";
+    public String msg(@RequestParam("content") String content) {
+        return weatherService.response(content);
     }
 }

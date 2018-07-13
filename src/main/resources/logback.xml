@@ -9,9 +9,9 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_PATH}/xiu-love.log</file>
+        <file>${LOG_PATH}/daydayup.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/xiu-love-%d{yyyyMMddHH}.log.%i</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/daydayup-%d{yyyyMMddHH}.log.%i</fileNamePattern>
             <maxFileSize>200MB</maxFileSize>
             <maxHistory>10</maxHistory>
         </rollingPolicy>

@@ -7,7 +7,9 @@ spring:
   application:
     name: daydayup
 
-
+weather:
+  recent:
+    key: ce896f3a8bed406eb416f0ae77bbd259
 management:
   security:
     enabled: false
