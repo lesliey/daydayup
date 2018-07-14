@@ -39,7 +39,7 @@ public class WeatherServiceImpl implements RobotService {
 
     @Override
     public String response(String content) {
-        String name = "小主";
+        String name = "大宝贝";
         String result = "";
         String city = propMgr.getCityFromContent(content);
         log.info("准备查询name:{}的天气", city);
