@@ -38,7 +38,7 @@ public class UpApplication {
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().contact(new Contact("杨海校", "http://184.170.216.35/", "yanghx_pro@163.com")).title("秀（Xiu）Restful Api文档").description("提供api接口的查询与调试")
+        return new ApiInfoBuilder().contact(new Contact("杨海校", "http://184.170.216.35/", "yanghx_pro@163.com")).title("Robot Wx Restful Api文档").description("提供api接口的查询与调试")
                 .termsOfServiceUrl("http://184.170.216.35/").version("0.1").build();
     }
 

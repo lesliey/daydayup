@@ -28,6 +28,7 @@ public class WeatherTest {
     private TodayWeatherClient client;
     @Autowired
     private ObjectMapper objectMapper;
+
     @Test
     public void testRecent() {
         System.out.println(w.response("上海未来天气"));
@@ -36,6 +37,6 @@ public class WeatherTest {
     @Test
     public void testToday() throws JsonProcessingException {
         System.out.println(objectMapper.writeValueAsString(client.get("101010600")));
-      System.out.println(w.response("泗阳天气"));
+        System.out.println(w.response("吉林天气"));
     }
 }
