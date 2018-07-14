@@ -42,12 +42,7 @@ public class UpApplication {
                 .termsOfServiceUrl("http://184.170.216.35/").version("0.1").build();
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return objectMapper;
-    }
+
 
     @Bean
     public RestTemplate restTemplate() {

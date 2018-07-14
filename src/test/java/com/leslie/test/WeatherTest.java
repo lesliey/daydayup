@@ -1,5 +1,7 @@
 package com.leslie.test;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leslie.UpApplication;
 import com.leslie.remote.TodayWeatherClient;
 import com.leslie.service.impl.WeatherServiceImpl;
@@ -24,14 +26,16 @@ public class WeatherTest {
     private WeatherServiceImpl w;
     @Autowired
     private TodayWeatherClient client;
+    @Autowired
+    private ObjectMapper objectMapper;
     @Test
     public void testRecent() {
         System.out.println(w.response("上海未来天气"));
     }
 
     @Test
-    public void testToday() {
-        System.out.println(client.get("101010600"));
+    public void testToday() throws JsonProcessingException {
+        System.out.println(objectMapper.writeValueAsString(client.get("101010600")));
       System.out.println(w.response("泗阳天气"));
     }
 }

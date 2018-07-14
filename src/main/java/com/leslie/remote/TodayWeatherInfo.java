@@ -1,5 +1,6 @@
 package com.leslie.remote;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -12,16 +13,23 @@ import lombok.Data;
 
 @Data
 public class TodayWeatherInfo {
+    @JsonProperty("city")
     private String city;
     private String cityid;
     private String temp;
+    @JsonProperty("WD")
     private String WD;
+    @JsonProperty("WS")
     private String WS;
+    @JsonProperty("SD")
     private String SD;
+    @JsonProperty("WSE")
     private String WSE;
     private String time;
     private String isRadar;
+    @JsonProperty("Radar")
     private String Radar;
+    @JsonProperty("njd")
     private String njd;
     private String qy;
     private String rain;
