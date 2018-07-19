@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 
 @Component("weather")
@@ -51,6 +52,8 @@ public class WeatherServiceImpl implements RobotService {
                 TodayWeather t = todayWeatherClient.get(code);
                 TodayWeatherInfo weatherInfo = t.getWeatherinfo();
                 GregorianCalendar ca = new GregorianCalendar();
+                TimeZone timeZone = TimeZone.getTimeZone("PRC");
+                ca.setTimeZone(timeZone);
                 String half = ca.get(GregorianCalendar.AM_PM) == 0 ? "上午好" : "下午好";
                 return String.format("%s，%s，%s当前的天气:%s°C,%s,湿度%s,%s", name, half, weatherInfo.getCity(), weatherInfo.getTemp(), weatherInfo.getWD() + "" + weatherInfo.getWS(),
                         weatherInfo.getWD(), "0".equals(weatherInfo.getRain()) ? "无雨。" : "有雨(上班记得带伞啦)。");
