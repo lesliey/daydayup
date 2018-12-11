@@ -10,6 +10,9 @@ spring:
 weather:
   recent:
     key: ce896f3a8bed406eb416f0ae77bbd259
+  baidu:
+    key: Gy7SGUigZ4HxGYDaq9azWy09
+
 management:
   security:
     enabled: false
