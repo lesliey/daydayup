@@ -1,5 +1,7 @@
 package com.leslie.test;
 
+import java.io.IOException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leslie.UpApplication;
+import com.leslie.common.WeixinMgr;
 import com.leslie.remote.BaiduWeatherClient;
 import com.leslie.remote.TodayWeatherClient;
 import com.leslie.service.impl.BaiduWeatherServiceImpl;
@@ -36,6 +39,8 @@ public class WeatherTest {
   private BaiduWeatherClient baiduWeatherClient;
   @Autowired
   private BaiduWeatherServiceImpl baiduWeatherService;
+  @Autowired
+  private WeixinMgr weixinMgr;
 
   @Test
   public void testRecent() {
@@ -51,5 +56,12 @@ public class WeatherTest {
   @Test
   public void testbaidu() throws JsonProcessingException {
     System.out.println(objectMapper.writeValueAsString(baiduWeatherService.response("上海天气")));
+  }
+
+  private String wife = "oZyK-1c-jkgZDOsN01wr-ukvxpYU";
+
+  @Test
+  public void testPush() throws IOException {
+    weixinMgr.pushMsg("gh_55c5bb057e4a", "asdasd");
   }
 }
