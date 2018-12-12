@@ -1,5 +1,10 @@
 {
   "天气": "baidu_weather",
+  "雨": "baidu_weather",
+  "雪": "baidu_weather",
+  "晴": "baidu_weather",
+  "热": "baidu_weather",
+  "冷": "baidu_weather",
   "你是谁": "identity",
   "你叫什么": "identity",
   "你是": "identity",
